@@ -6,3 +6,10 @@ class ClaimType(Enum):
      DYNAMIC = 'dynamic'
      NORMATIVE = 'normative'
 
+DECAY_RATES = {
+    ClaimType.STRUCTURAL: 0.0001,
+    ClaimType.EMPIRICAL: 0.005,
+    ClaimType.DYNAMIC: 0.05,
+    ClaimType.NORMATIVE: 0.02
+}
+
