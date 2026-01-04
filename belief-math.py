@@ -25,10 +25,20 @@ class Evidence:
 
 def evidence_support(evidence_list: List[Evidence]) -> float:
     """
-    This module calculates the support strength of a list of evidence and penalizes contradictory evidence.
-    It returns a float value representing the overall support strength.
+    Computes mean support strength of all evidence.
     """
-    contradictions = sum(1 for e in evidence_list if e.support_strength < 0 )
+    if not evidence_list:
+        return 0.0
+
+    return sum(e.support_strength for e in evidence_list) / len(evidence_list)
+
+
+def contradiction_penalty(evidence_list: List[Evidence]) -> float:
+    """
+    Penalizes confidence based on contradicting evidence.
+    Contradictions hurt more than confirmations help.
+    """
+    contradictions = sum(1 for e in evidence_list if e.support_strength < 0)
+
     penalty = contradictions * 0.1
     return min(0.5, penalty)
-
