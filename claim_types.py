@@ -1,5 +1,10 @@
 from enum import Enum
 
+"""
+This module helps in keeping a structure for claim types and decay rates. 
+ClaimType consists of four types: Structural, Empirical, Dynamic and Normative
+Decay rates are set for each claim type
+"""
 class ClaimType(Enum):
      STRUCTURAL = 'structural'
      EMPIRICAL = 'empirical'
