@@ -9,3 +9,6 @@ def update_belief_confidence(belief):
         last_verified=belief.last_verified,
         decay_rate=decay_rate
     )
+
+def update_belief_status(belief):
+    belief.status = update_belief_confidence(belief)
