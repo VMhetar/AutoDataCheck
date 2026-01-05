@@ -23,3 +23,24 @@ def update_belief_status(belief):
     """
     belief.status = belief_status(belief.confidence)
     return belief.status
+
+from datetime import datetime
+
+def refresh_belief(belief):
+    """
+    Performs a full belief refresh cycle.
+    """
+    now = datetime.utcnow()
+
+    decay_rate = DECAY_RATES[belief.claim_type]
+
+    belief.confidence = compute_confidence(
+        evidence_list=belief.evidence,
+        last_verified=belief.last_verified,
+        decay_rate=decay_rate
+    )
+
+    belief.status = belief_status(belief.confidence)
+    belief.last_updated = now
+
+    return belief
