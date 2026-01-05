@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 from claim_types import ClaimType
 
 """
@@ -20,7 +20,7 @@ def needs_refresh(belief) -> bool:
     """
     Determines whether a belief should be refreshed or not based on the current beliefs.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     interval = REFRESH_INTERVALS[belief.claim_type]
 
     return (now - belief.last_updated) >= interval
