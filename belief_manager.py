@@ -1,7 +1,11 @@
-from belief_math import compute_confidence
+from belief_math import compute_confidence, belief_status
 from claim_types import DECAY_RATES
 
+
 def update_belief_confidence(belief):
+    """
+    Recomputes and updates belief confidence based on evidence and decay.
+    """
     decay_rate = DECAY_RATES[belief.claim_type]
 
     belief.confidence = compute_confidence(
@@ -10,5 +14,12 @@ def update_belief_confidence(belief):
         decay_rate=decay_rate
     )
 
+    return belief.confidence
+
+
 def update_belief_status(belief):
-    belief.status = update_belief_confidence(belief)
+    """
+    Updates belief status based on current confidence.
+    """
+    belief.status = belief_status(belief.confidence)
+    return belief.status
