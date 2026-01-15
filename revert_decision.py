@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from claim_types import ClaimType
 
-
 def should_revert(belief) -> dict:
     """
     Determines whether a belief decision should be reverted.
