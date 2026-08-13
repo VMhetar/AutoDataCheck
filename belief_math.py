@@ -8,7 +8,7 @@ All belief confidence must flow through this file.
 """
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Set
 import math
 
@@ -52,14 +52,32 @@ def source_diversity_bonus(evidence_list: List[Evidence]) -> float:
     """
     Rewards independent confirmation across diverse sources.
     Source diversity helps prevent confirmation bias.
+
+    A single source (or evidence all coming from the same source)
+    provides no independent confirmation and earns no diversity bonus.
     """
     if not evidence_list:
         return 0.0
 
     unique_sources: Set[str] = {e.source_id for e in evidence_list}
+
+    if len(unique_sources) < 2:
+        return 0.0
+
     diversity_ratio = len(unique_sources) / len(evidence_list)
 
     return min(0.3, diversity_ratio)
+
+
+def _ensure_aware(dt: datetime) -> datetime:
+    """
+    Normalizes naive datetimes to UTC so timezone-aware comparisons work.
+    """
+    if dt is None:
+        return datetime.now(timezone.utc)
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
 
 
 def time_decay(last_verified: datetime, decay_rate: float = 0.01) -> float:
@@ -68,7 +86,8 @@ def time_decay(last_verified: datetime, decay_rate: float = 0.01) -> float:
     Uses exponential decay.
     Useful for preventing the issues of bias over time
     """
-    days_passed = (datetime.utcnow() - last_verified).days
+    last = _ensure_aware(last_verified)
+    days_passed = (datetime.now(timezone.utc) - last).days
 
     if days_passed <= 0:
         return 0.0

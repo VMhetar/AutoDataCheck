@@ -1,5 +1,6 @@
 from belief_math import compute_confidence, belief_status
 from claim_types import DECAY_RATES
+from datetime import datetime, timezone
 
 
 def update_belief_confidence(belief):
@@ -24,13 +25,12 @@ def update_belief_status(belief):
     belief.status = belief_status(belief.confidence)
     return belief.status
 
-from datetime import datetime
 
 def refresh_belief(belief):
     """
     Performs a full belief refresh cycle.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     decay_rate = DECAY_RATES[belief.claim_type]
 
@@ -42,5 +42,14 @@ def refresh_belief(belief):
 
     belief.status = belief_status(belief.confidence)
     belief.last_updated = now
+
+    belief.verification_count += 1
+
+    belief.history.append({
+        "confidence": belief.confidence,
+        "status": belief.status,
+        "timestamp": now.isoformat(),
+        "reason": "refresh cycle"
+    })
 
     return belief

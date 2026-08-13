@@ -3,9 +3,14 @@ import httpx
 import logging
 import json
 import asyncio
-from mcp.server.fastmcp import FastMCP
+from datetime import datetime
 
-mcp = FastMCP('127.0.0.1')
+try:
+    from mcp.server.fastmcp import FastMCP
+    mcp = FastMCP('127.0.0.1')
+except ImportError:
+    FastMCP = None
+    mcp = None
 
 url = "https://openrouter.ai/api/v1/chat/completions"
 

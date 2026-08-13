@@ -1,6 +1,7 @@
 from typing import List, Dict, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
+from claim_types import ClaimType, DECAY_RATES
 
 """
 Schema definition for representing Evidence containing source_id, dource_type, support_strength and timestamp.
@@ -20,6 +21,7 @@ class Evidence:
 Schema defintion for representing BeliefState containing state_id, claim, confidence, uncertainty, evidence, contradiction_count, source_diversity, verification_count, decay_rate, last_verified, last_updated and status.
 state_id (int) : Unique identifier for the belief state.   
 claim (str) : The claim or proposition being evaluated.
+claim_type (ClaimType) : The epistemic class of the claim (structural, empirical, dynamic, normative).
 confidence (float) : A numerical value representing the confidence level in the claim (0 to 1).
 uncertainty (float) : A numerical value representing the uncertainty level in the claim (0 to 1).
 evidence (List[Evidence]) : A list of Evidence objects supporting or contradicting the claim.
@@ -35,6 +37,7 @@ status (str) : The current status of the belief state (e.g., 'unverified', 'veri
 class BeliefState:
     state_id: int
     claim: str
+    claim_type: ClaimType
 
     confidence: float         
     uncertainty: float      
@@ -49,4 +52,11 @@ class BeliefState:
     last_verified: datetime
     last_updated: datetime
 
-    status: str            
+    status: str
+    history: List[dict] = field(default_factory=list)
+
+    def __post_init__(self):
+        """
+        Keeps decay_rate consistent with the claim type's canonical rate.
+        """
+        self.decay_rate = DECAY_RATES[self.claim_type]            
